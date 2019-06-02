@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "*"
+pytz = "*"
+psycopg2-binary = "*"
+djangorestframework = "*"
+django-filter = "*"
+factory-boy = "*"
+gunicorn = "*"
+pandas = "*"
+scipy = "*"
+numpy = "*"
+matplotlib = "*"
+celery = {extras = ["redis"],version = "*"}
+uuid = "*"
+
+[requires]
+python_version = "3.6"
