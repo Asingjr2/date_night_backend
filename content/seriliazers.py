@@ -2,11 +2,11 @@ from rest_framework import serializers
 
 
 class MovieSerializer(serializers.Serializer):
-    title = serializers.Charfield(
+    title = serializers.CharField(
         min_length=2,
         max_length=100
     )
-    genre = serializers.Charfield(
+    genre = serializers.CharField(
         min_length=4,
         max_length=50
     )
@@ -17,7 +17,7 @@ class MovieSerializer(serializers.Serializer):
 
 
 class WineSerializer(serializers.Serializer):
-    name = serializers.Charfield(
+    name = serializers.CharField(
         min_length=2,
         max_length=50
     )
@@ -28,11 +28,11 @@ class WineSerializer(serializers.Serializer):
 
 
 class FoodSerializer(serializers.Serializer):
-    name = serializers.Charfield(
+    name = serializers.CharField(
         min_length=2,
         max_length=50
     )
-    category = serializers.Charfield(
+    category = serializers.CharField(
         min_length=2,
         max_length=50
     )
