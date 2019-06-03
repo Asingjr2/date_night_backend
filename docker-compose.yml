@@ -1,0 +1,83 @@
+version: '3.3'
+
+services:
+  db:
+    container_name: date_night_backend_db
+    restart: always
+    image: postgres:10.1-alpine
+    volumes:
+    - postgres_data:/var/lib/postgresql/data/
+
+  redis:
+    container_name: date_night_backend_cache
+    restart: always
+    image: "redis:alpine"
+
+  celery_tasks:
+    container_name: date_night_backend_celery_tasks
+    restart: always
+    build: .
+    command: >
+      bash -c "apt update && 
+              apt install dos2unix && 
+              dos2unix ./start_celery.sh && 
+              ./start_celery.sh"
+    volumes:
+    - .:/code
+    depends_on:
+    - db
+    - redis
+    environment:
+      DJANGO_SETTINGS_MODULE: date_night_backend.settings
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_DOMAIN: redis
+      REDIS_PORT: 6379
+
+  web:
+    container_name: date_night_backend_web
+    restart: always
+    build: .
+    command: >
+      bash -c "apt update && 
+              apt install dos2unix && 
+              dos2unix ./start.sh && 
+              ./start.sh"
+    volumes:
+    - .:/code
+    - static_volume:/code/date_/static
+    - media_volume:/code/date_night_backend/media
+    expose:
+    - 8082
+    depends_on:
+    - db
+    - redis
+    - celery_tasks
+    environment:
+      DJANGO_SETTINGS_MODULE: date_night_backend.settings
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_DOMAIN: redis
+      REDIS_PORT: 6379
+
+  nginx:
+    container_name: date_night_backend_nginx
+    restart: always
+    build: ./nginx
+    volumes:
+    - static_volume:/code/date_night_backend/static
+    - media_volume:/code/date_night_backend/media
+    ports:
+    - 1337:80
+    depends_on:
+    - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+

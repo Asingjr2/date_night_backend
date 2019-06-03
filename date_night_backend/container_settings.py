@@ -1,5 +1,7 @@
 import os
 
+env = os.environ
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -66,24 +68,23 @@ WSGI_APPLICATION = 'date_night_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# Uncomment to run locally
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-# Uncomment to run with container
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env['DB_NAME'],
-#         'USER': env['DB_USER'],
-#         'HOST': env['DB_HOST'],
-#         'PORT': env['DB_PORT']
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+# Uncomment to run with container
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env['DB_NAME'],
+        'USER': env['DB_USER'],
+        'HOST': env['DB_HOST'],
+        'PORT': env['DB_PORT']
+    }
+}
 
 
 # Password validation
@@ -123,6 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # rest_framework
 REST_FRAMEWORK = {
@@ -131,9 +137,16 @@ REST_FRAMEWORK = {
 }
 
 # Celery setup information
-REDIS_URL = 'redis://localhost:6379/1'
+# REDIS_URL = 'redis://localhost:6379/1'
+# CELERY = {
+#     'broker_url': REDIS_URL,
+#     'result_backend': REDIS_URL
+# }
+
+# Celery setup container
+REDIS_URL = 'redis://{}:{}/0'.format(env['REDIS_DOMAIN'], env['REDIS_PORT'])
+
 CELERY = {
     'broker_url': REDIS_URL,
     'result_backend': REDIS_URL
 }
-
